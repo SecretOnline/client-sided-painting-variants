@@ -4,9 +4,7 @@
 	"version": "${version}",
 	"name": "More paintings on the client",
 	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
+	"authors": ["Me!"],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
