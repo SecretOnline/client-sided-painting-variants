@@ -21,7 +21,6 @@
 		]
 	},
 	"mixins": [
-		"more-paintings-on-the-client.mixins.json",
 		{
 			"config": "more-paintings-on-the-client.client.mixins.json",
 			"environment": "client"

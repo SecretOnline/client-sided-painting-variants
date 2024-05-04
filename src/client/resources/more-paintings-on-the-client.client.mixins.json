@@ -2,7 +2,7 @@
 	"required": true,
 	"package": "co.secretonline.morepaintingsontheclient.mixin.client",
 	"compatibilityLevel": "JAVA_21",
-	"client": ["ExampleClientMixin"],
+	"client": ["MorePaintingsClientMixin"],
 	"injectors": {
 		"defaultRequire": 1
 	}
