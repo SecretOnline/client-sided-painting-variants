@@ -80,8 +80,8 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 				(fromRegistry, fromResources) -> {
 					var info = new MorePaintingsInfo();
 
-					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(variant));
-					fromResources.forEach((identifier, variant) -> info.addAddedPainting(variant));
+					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(identifier, variant));
+					fromResources.forEach((identifier, variant) -> info.addAddedPainting(identifier, variant));
 
 					return info;
 				});

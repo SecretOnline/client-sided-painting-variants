@@ -1,9 +1,10 @@
 package co.secretonline.morepaintingsontheclient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
 
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.util.Identifier;
@@ -12,6 +13,8 @@ import net.minecraft.util.Identifier;
  * Data structure for paingings old and new.
  */
 public class MorePaintingsInfo {
+	private static Logger LOGGER = MorePaintingsOnTheClient.LOGGER;
+
 	private Map<String, PaintingsForSize> paintings = new HashMap<>();
 
 	private String toKey(int a, int b) {
@@ -30,16 +33,23 @@ public class MorePaintingsInfo {
 		return size;
 	}
 
-	public void addRegisteredPainting(PaintingVariant painting) {
+	public boolean addRegisteredPainting(Identifier identifier, PaintingVariant painting) {
 		var size = getOrAddSize(painting.getWidth(), painting.getHeight());
 
-		size.registeredPaintings.add(painting);
+		size.registeredPaintings.put(identifier, painting);
+		return true;
 	}
 
-	public void addAddedPainting(AddedPaintingVariant painting) {
+	public boolean addAddedPainting(Identifier identifier, AddedPaintingVariant painting) {
 		var size = getOrAddSize(painting.getWidth(), painting.getHeight());
 
-		size.addedPaintings.add(painting);
+		if (size.registeredPaintings.containsKey(identifier)) {
+			LOGGER.warn("Painting {} has already been registered by the game. Skipping", identifier.toString());
+			return false;
+		}
+
+		size.addedPaintings.put(identifier, painting);
+		return true;
 	}
 
 	public PaintingsForSize getPaintingsForSize(int widthPx, int heightPx) {
@@ -47,15 +57,15 @@ public class MorePaintingsInfo {
 	}
 
 	static public class PaintingsForSize {
-		private List<PaintingVariant> registeredPaintings = new ArrayList<>();
-		private List<AddedPaintingVariant> addedPaintings = new ArrayList<>();
+		private Map<Identifier, PaintingVariant> registeredPaintings = new HashMap<>();
+		private Map<Identifier, AddedPaintingVariant> addedPaintings = new HashMap<>();
 
 		public List<PaintingVariant> getRegisteredPaintings() {
-			return registeredPaintings;
+			return List.copyOf(registeredPaintings.values());
 		}
 
 		public List<AddedPaintingVariant> getAddedPaintings() {
-			return addedPaintings;
+			return List.copyOf(addedPaintings.values());
 		}
 	}
 
