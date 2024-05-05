@@ -41,12 +41,8 @@ public class MorePaintingsPaintingEntityRendererMixin {
 		int numAdded = paintingsForSize.getAddedPaintings().size();
 		int numTotal = numRegistered + numAdded;
 
-		// Use the hash of the UUID as a stable random value.
-		// For whatever reason, the project is complaining about the UUID type.
-		// I'm sure it's some tiny thing, but I simply don't have the energy to figure
-		// it out so we'll just use the string and hash that instead.
-		// This shouldn't change much of how the mod behaves.
-		int hash = entity.getUuidAsString().hashCode();
+		// Use the hash of the UUID as a stable random value for this entity.
+		int hash = entity.getUuid().hashCode();
 
 		// % can be negative, so add the total and % again for the proper modulo.
 		int modulo = ((hash % (numTotal)) + numTotal) % numTotal;
