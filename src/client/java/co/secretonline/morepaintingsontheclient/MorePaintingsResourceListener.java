@@ -69,6 +69,8 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 							new AddedPaintingVariant(width * NUM_PIXELS_PER_BLOCK, height * NUM_PIXELS_PER_BLOCK, assetId));
 				} catch (IOException ex) {
 					LOGGER.warn("Failed to read data for " + identifier.toString() + ". Skipping");
+				} catch (Exception ex) {
+					LOGGER.warn("Error while reading painting variant " + identifier.toString() + ". Skipping");
 				}
 			});
 
