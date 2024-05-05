@@ -15,6 +15,5 @@ public class MorePaintingsOnTheClient implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("tyvm");
 	}
 }
