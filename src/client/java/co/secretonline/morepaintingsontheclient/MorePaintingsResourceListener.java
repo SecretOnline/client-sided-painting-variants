@@ -68,7 +68,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 					paintings.put(identifier,
 							new AddedPaintingVariant(width * NUM_PIXELS_PER_BLOCK, height * NUM_PIXELS_PER_BLOCK, assetId));
 				} catch (IOException ex) {
-					LOGGER.info("Failed to read data for " + identifier.toString() + ". Skipping");
+					LOGGER.warn("Failed to read data for " + identifier.toString() + ". Skipping");
 				}
 			});
 
@@ -89,8 +89,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 		var afterSync = prepareStage.thenCompose(synchronizer::whenPrepared);
 
 		var applyStage = afterSync.thenAcceptAsync((info) -> {
-			LOGGER.info("Paintings added");
-
+			LOGGER.info(info.getSummaryString());
 			KNOWN_PAINTINGS = info;
 		}, applyExecutor);
 

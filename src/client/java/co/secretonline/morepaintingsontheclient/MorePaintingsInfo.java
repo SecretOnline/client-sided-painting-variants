@@ -1,5 +1,6 @@
 package co.secretonline.morepaintingsontheclient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import net.minecraft.util.Identifier;
 public class MorePaintingsInfo {
 	private static Logger LOGGER = MorePaintingsOnTheClient.LOGGER;
 
-	private Map<String, PaintingsForSize> paintings = new HashMap<>();
+	private Map<String, PaintingsForSize> paintingSizes = new HashMap<>();
 
 	private String toKey(int a, int b) {
 		return a + "x" + b;
@@ -24,10 +25,10 @@ public class MorePaintingsInfo {
 	private PaintingsForSize getOrAddSize(int widthPx, int heightPx) {
 		String key = toKey(widthPx, heightPx);
 
-		var size = paintings.get(key);
+		var size = paintingSizes.get(key);
 		if (size == null) {
 			size = new PaintingsForSize();
-			paintings.put(key, size);
+			paintingSizes.put(key, size);
 		}
 
 		return size;
@@ -53,7 +54,35 @@ public class MorePaintingsInfo {
 	}
 
 	public PaintingsForSize getPaintingsForSize(int widthPx, int heightPx) {
-		return paintings.get(toKey(widthPx, heightPx));
+		return paintingSizes.get(toKey(widthPx, heightPx));
+	}
+
+	public String getSummaryString() {
+		int numPaintings = 0;
+		var sizeSummaries = new ArrayList<String>(paintingSizes.size());
+
+		for (var entry : paintingSizes.entrySet()) {
+			var key = entry.getKey();
+			var paintings = entry.getValue();
+
+			numPaintings += paintings.registeredPaintings.size() + paintings.addedPaintings.size();
+			sizeSummaries.add(new StringBuilder()
+					.append(key)
+					.append(" (")
+					.append(paintings.registeredPaintings.size())
+					.append("+")
+					.append(paintings.addedPaintings.size())
+					.append(")")
+					.toString());
+		}
+
+		var sb = new StringBuilder()
+				.append(numPaintings)
+				.append(" paintings for ")
+				.append(paintingSizes.size())
+				.append(" sizes: ")
+				.append(String.join(", ", sizeSummaries));
+		return sb.toString();
 	}
 
 	static public class PaintingsForSize {
