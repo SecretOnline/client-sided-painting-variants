@@ -2,6 +2,8 @@
 
 A mod that allows you to add new types of painting without removing any existing paintings.
 
+This mod requires [Fabric API](https://modrinth.com/mod/fabric-api), so make sure it's installed with this mod.
+
 ## Caveats
 
 As this is a client-side mod with no interaction with the server, this mod does not add new sizes of painting. It can only add new artwork for existing sizes.
