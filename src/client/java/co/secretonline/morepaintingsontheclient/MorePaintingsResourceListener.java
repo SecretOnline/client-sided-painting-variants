@@ -1,12 +1,12 @@
 package co.secretonline.morepaintingsontheclient;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
@@ -18,6 +18,11 @@ import net.minecraft.util.profiler.Profiler;
 
 public class MorePaintingsResourceListener implements IdentifiableResourceReloadListener {
 	private static final int NUM_PIXELS_PER_BLOCK = 16;
+
+	// I'd love a way to do this without having a static reference, but for now this
+	// will do.
+	@Nullable
+	public static MorePaintingsInfo KNOWN_PAINTINGS = null;
 
 	@Override
 	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager resourceManager,
@@ -70,25 +75,20 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 		// Combine steps from prepare stage
 		var prepareStage = paintingsFromRegistryFuture.thenCombine(paintingsFromResourcesFuture,
 				(fromRegistry, fromResources) -> {
-					var basket = new PaintingsBasket();
-					basket.registryPaintings = fromRegistry;
-					basket.resourcesPaintings = fromResources;
+					var info = new MorePaintingsInfo();
 
-					return basket;
+					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(variant));
+					fromResources.forEach((identifier, variant) -> info.addRegisteredPainting(variant));
+
+					return info;
 				});
 
 		var afterSync = prepareStage.thenCompose(synchronizer::whenPrepared);
 
-		var applyStage = afterSync.thenAcceptAsync((basket) -> {
-			MorePaintingsOnTheClient.LOGGER.info("Yeah paintings! Woo!");
+		var applyStage = afterSync.thenAcceptAsync((info) -> {
+			MorePaintingsOnTheClient.LOGGER.info("Paintings added");
 
-			List<String> registeredIds = new ArrayList<>();
-			basket.registryPaintings.forEach((id, variant) -> registeredIds.add(id.toString()));
-			MorePaintingsOnTheClient.LOGGER.info("Registered: " + String.join(", ", registeredIds));
-
-			List<String> ids = new ArrayList<>();
-			basket.resourcesPaintings.forEach((id, variant) -> ids.add(id.toString()));
-			MorePaintingsOnTheClient.LOGGER.info("Client only: " + String.join(", ", ids));
+			KNOWN_PAINTINGS = info;
 		}, applyExecutor);
 
 		return applyStage;
@@ -97,13 +97,5 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 	@Override
 	public Identifier getFabricId() {
 		return new Identifier(MorePaintingsOnTheClient.MOD_ID, "resource-listener");
-	}
-
-	private class PaintingsBasket {
-		// TODO: Figure out what info is actually needed
-
-		Map<Identifier, PaintingVariant> registryPaintings;
-
-		Map<Identifier, PaintingVariant> resourcesPaintings;
 	}
 }
