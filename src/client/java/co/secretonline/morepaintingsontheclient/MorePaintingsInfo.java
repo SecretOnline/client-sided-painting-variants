@@ -46,7 +46,7 @@ public class MorePaintingsInfo {
 		return paintings.get(toKey(widthPx, heightPx));
 	}
 
-	public class PaintingsForSize {
+	static public class PaintingsForSize {
 		private List<PaintingVariant> registeredPaintings = new ArrayList<>();
 		private List<AddedPaintingVariant> addedPaintings = new ArrayList<>();
 
@@ -59,7 +59,7 @@ public class MorePaintingsInfo {
 		}
 	}
 
-	public class AddedPaintingVariant {
+	static public class AddedPaintingVariant {
 		private int width;
 		private int height;
 		private Identifier assetId;

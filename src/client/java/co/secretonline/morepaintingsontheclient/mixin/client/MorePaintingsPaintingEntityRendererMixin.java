@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import co.secretonline.morepaintingsontheclient.MorePaintingsOnTheClient;
 import co.secretonline.morepaintingsontheclient.MorePaintingsResourceListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.PaintingEntityRenderer;
@@ -18,9 +17,6 @@ public class MorePaintingsPaintingEntityRendererMixin {
 	private static final int ARG_PAINTING_ENTITY = 2;
 	private static final int ARG_PAINTING_SPRITE = 5;
 
-	private boolean one = false;
-	private boolean two = false;
-
 	private Sprite getPaintingSprite(Identifier identifier) {
 		var paintingManager = MinecraftClient.getInstance().getPaintingManager();
 
@@ -29,16 +25,6 @@ public class MorePaintingsPaintingEntityRendererMixin {
 
 	@ModifyArgs(method = "render(Lnet/minecraft/entity/decoration/painting/PaintingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/PaintingEntityRenderer;renderPainting(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/decoration/painting/PaintingEntity;IILnet/minecraft/client/texture/Sprite;Lnet/minecraft/client/texture/Sprite;)V"))
 	private void switchRenderedPainting(Args args) {
-		if (!two) {
-			if (!one) {
-				MorePaintingsOnTheClient.LOGGER.info("renderone");
-				one = true;
-			} else {
-				MorePaintingsOnTheClient.LOGGER.info("rendertwo");
-				two = true;
-			}
-		}
-
 		var knownPaintings = MorePaintingsResourceListener.KNOWN_PAINTINGS;
 		if (knownPaintings == null) {
 			return;

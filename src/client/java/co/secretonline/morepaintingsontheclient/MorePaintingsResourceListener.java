@@ -7,7 +7,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
+import co.secretonline.morepaintingsontheclient.MorePaintingsInfo.AddedPaintingVariant;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.registry.Registries;
@@ -17,10 +19,10 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
 public class MorePaintingsResourceListener implements IdentifiableResourceReloadListener {
+	private static Logger LOGGER = MorePaintingsOnTheClient.LOGGER;
+
 	private static final int NUM_PIXELS_PER_BLOCK = 16;
 
-	// I'd love a way to do this without having a static reference, but for now this
-	// will do.
 	@Nullable
 	public static MorePaintingsInfo KNOWN_PAINTINGS = null;
 
@@ -50,7 +52,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 		}, prepareExecutor);
 
 		var paintingsFromResourcesFuture = CompletableFuture.supplyAsync(() -> {
-			Map<Identifier, PaintingVariant> paintings = new HashMap<>();
+			Map<Identifier, AddedPaintingVariant> paintings = new HashMap<>();
 
 			var allVariantJsonFiles = resourceManager.findResources("painting_variant",
 					identifier -> identifier.getPath().endsWith(".json"));
@@ -60,12 +62,13 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 					var data = JsonHelper.deserialize(reader).getAsJsonObject();
 					var width = data.get("width").getAsInt();
 					var height = data.get("height").getAsInt();
-					// TODO: Somehow get texture information through the process
-					// var assetId = data.get("asset_id").getasString();
 
-					paintings.put(identifier, new PaintingVariant(width * NUM_PIXELS_PER_BLOCK, height * NUM_PIXELS_PER_BLOCK));
+					var assetId = new Identifier(data.get("asset_id").getAsString());
+
+					paintings.put(identifier,
+							new AddedPaintingVariant(width * NUM_PIXELS_PER_BLOCK, height * NUM_PIXELS_PER_BLOCK, assetId));
 				} catch (IOException ex) {
-					MorePaintingsOnTheClient.LOGGER.info("Failed to read data for " + identifier.toString() + ". Skipping");
+					LOGGER.info("Failed to read data for " + identifier.toString() + ". Skipping");
 				}
 			});
 
@@ -78,7 +81,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 					var info = new MorePaintingsInfo();
 
 					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(variant));
-					fromResources.forEach((identifier, variant) -> info.addRegisteredPainting(variant));
+					fromResources.forEach((identifier, variant) -> info.addAddedPainting(variant));
 
 					return info;
 				});
@@ -86,7 +89,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 		var afterSync = prepareStage.thenCompose(synchronizer::whenPrepared);
 
 		var applyStage = afterSync.thenAcceptAsync((info) -> {
-			MorePaintingsOnTheClient.LOGGER.info("Paintings added");
+			LOGGER.info("Paintings added");
 
 			KNOWN_PAINTINGS = info;
 		}, applyExecutor);
