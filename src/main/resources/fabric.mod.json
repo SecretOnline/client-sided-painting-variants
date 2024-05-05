@@ -26,6 +26,7 @@
 			"environment": "client"
 		}
 	],
+	"accesswidener": "more-paintings-on-the-client.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": "~1.20.6",
