@@ -13,7 +13,7 @@ on:
         type: string
 
 env:
-  MOD_NAME: More paintings on the client
+  MOD_NAME: Client side painting variants
   MOD_ID: client-side-painting-variants
   MODRINTH_PROJECT_ID: T1MOUdih
 
