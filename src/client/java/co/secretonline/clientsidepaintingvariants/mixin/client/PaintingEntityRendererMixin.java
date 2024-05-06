@@ -1,11 +1,11 @@
-package co.secretonline.morepaintingsontheclient.mixin.client;
+package co.secretonline.clientsidepaintingvariants.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import co.secretonline.morepaintingsontheclient.MorePaintingsResourceListener;
+import co.secretonline.clientsidepaintingvariants.PaintingVariantsResourceListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.PaintingEntityRenderer;
 import net.minecraft.client.texture.Sprite;
@@ -13,7 +13,7 @@ import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.util.Identifier;
 
 @Mixin(PaintingEntityRenderer.class)
-public class MorePaintingsPaintingEntityRendererMixin {
+public class PaintingEntityRendererMixin {
 	private static final int ARG_PAINTING_ENTITY = 2;
 	private static final int ARG_PAINTING_SPRITE = 5;
 
@@ -25,7 +25,7 @@ public class MorePaintingsPaintingEntityRendererMixin {
 
 	@ModifyArgs(method = "render(Lnet/minecraft/entity/decoration/painting/PaintingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/PaintingEntityRenderer;renderPainting(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/decoration/painting/PaintingEntity;IILnet/minecraft/client/texture/Sprite;Lnet/minecraft/client/texture/Sprite;)V"))
 	private void switchRenderedPainting(Args args) {
-		var knownPaintings = MorePaintingsResourceListener.KNOWN_PAINTINGS;
+		var knownPaintings = PaintingVariantsResourceListener.KNOWN_PAINTINGS;
 		if (knownPaintings == null) {
 			return;
 		}

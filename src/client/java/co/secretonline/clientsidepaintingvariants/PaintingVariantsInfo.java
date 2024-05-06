@@ -1,4 +1,4 @@
-package co.secretonline.morepaintingsontheclient;
+package co.secretonline.clientsidepaintingvariants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import net.minecraft.util.Identifier;
 /**
  * Data structure for paingings old and new.
  */
-public class MorePaintingsInfo {
-	private static Logger LOGGER = MorePaintingsOnTheClient.LOGGER;
+public class PaintingVariantsInfo {
+	private static Logger LOGGER = ClientSidePaintingVariants.LOGGER;
 
 	private Map<String, PaintingsForSize> paintingSizes = new HashMap<>();
 

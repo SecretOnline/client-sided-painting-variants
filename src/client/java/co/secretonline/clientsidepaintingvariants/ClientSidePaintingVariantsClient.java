@@ -1,13 +1,13 @@
-package co.secretonline.morepaintingsontheclient;
+package co.secretonline.clientsidepaintingvariants;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceType;
 
-public class MorePaintingsOnTheClientClient implements ClientModInitializer {
+public class ClientSidePaintingVariantsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		MorePaintingsResourceListener listener = new MorePaintingsResourceListener();
+		PaintingVariantsResourceListener listener = new PaintingVariantsResourceListener();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(listener);
 	}
 }

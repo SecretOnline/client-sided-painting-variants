@@ -14,7 +14,7 @@ on:
 
 env:
   MOD_NAME: More paintings on the client
-  MOD_ID: more-paintings-on-the-client
+  MOD_ID: client-side-painting-variants
   MODRINTH_PROJECT_ID: T1MOUdih
 
 jobs:

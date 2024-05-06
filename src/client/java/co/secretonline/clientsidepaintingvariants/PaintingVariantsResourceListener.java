@@ -1,4 +1,4 @@
-package co.secretonline.morepaintingsontheclient;
+package co.secretonline.clientsidepaintingvariants;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import co.secretonline.morepaintingsontheclient.MorePaintingsInfo.AddedPaintingVariant;
+import co.secretonline.clientsidepaintingvariants.PaintingVariantsInfo.AddedPaintingVariant;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.registry.Registries;
@@ -18,13 +18,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
-public class MorePaintingsResourceListener implements IdentifiableResourceReloadListener {
-	private static Logger LOGGER = MorePaintingsOnTheClient.LOGGER;
+public class PaintingVariantsResourceListener implements IdentifiableResourceReloadListener {
+	private static Logger LOGGER = ClientSidePaintingVariants.LOGGER;
 
 	private static final int NUM_PIXELS_PER_BLOCK = 16;
 
 	@Nullable
-	public static MorePaintingsInfo KNOWN_PAINTINGS = null;
+	public static PaintingVariantsInfo KNOWN_PAINTINGS = null;
 
 	@Override
 	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager resourceManager,
@@ -80,7 +80,7 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 		// Combine steps from prepare stage
 		var prepareStage = paintingsFromRegistryFuture.thenCombine(paintingsFromResourcesFuture,
 				(fromRegistry, fromResources) -> {
-					var info = new MorePaintingsInfo();
+					var info = new PaintingVariantsInfo();
 
 					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(identifier, variant));
 					fromResources.forEach((identifier, variant) -> info.addAddedPainting(identifier, variant));
@@ -100,6 +100,6 @@ public class MorePaintingsResourceListener implements IdentifiableResourceReload
 
 	@Override
 	public Identifier getFabricId() {
-		return new Identifier(MorePaintingsOnTheClient.MOD_ID, "resource-listener");
+		return new Identifier(ClientSidePaintingVariants.MOD_ID, "resource-listener");
 	}
 }

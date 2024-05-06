@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "co.secretonline.clientsidepaintingvariants.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": ["PaintingEntityRendererMixin"],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

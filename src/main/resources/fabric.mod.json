@@ -1,28 +1,28 @@
 {
 	"schemaVersion": 1,
-	"id": "more-paintings-on-the-client",
+	"id": "client-side-painting-variants",
 	"version": "${version}",
-	"name": "More paintings on the client",
+	"name": "Client side painting variants",
 	"description": "Add your own painting variants, but completely client-side",
 	"authors": ["secret_online"],
 	"license": "MPL-2.0",
-	"icon": "assets/more-paintings-on-the-client/icon.png",
+	"icon": "assets/client-side-painting-variants/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"co.secretonline.morepaintingsontheclient.MorePaintingsOnTheClient"
+			"co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariants"
 		],
 		"client": [
-			"co.secretonline.morepaintingsontheclient.MorePaintingsOnTheClientClient"
+			"co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariantsClient"
 		]
 	},
 	"mixins": [
 		{
-			"config": "more-paintings-on-the-client.client.mixins.json",
+			"config": "client-side-painting-variants.client.mixins.json",
 			"environment": "client"
 		}
 	],
-	"accesswidener": "more-paintings-on-the-client.accesswidener",
+	"accesswidener": "client-side-painting-variants.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": "~1.20.6",

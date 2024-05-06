@@ -1,4 +1,4 @@
-# More paintings on the client
+# Client side painting variants
 
 A mod that allows you to add new types of painting without removing any existing paintings.
 
@@ -6,7 +6,7 @@ This mod requires [Fabric API](https://modrinth.com/mod/fabric-api), so make sur
 
 ## Wait, how is this different from 1.21's painting variants?
 
-1.21's painting variants rely on data packs to specify new variants, which then means that every client connected to the server gets new paintings. What this mod does is extend that idea further, allowing resource packs to define more painting variants for any players using the mod on their clients.
+Minecraft `1.21` adds painting variants that rely on data packs to specify new variants, which I love because painting are fantastic. Unfortunately this means that these paintings must be defined per world, or set up by the server's admin. What this mod does is extend that idea further, allowing resource packs to define more painting variants for any players using the mod on their clients. Clients without the mod just see the regular paintings.
 
 This does lead to the one limitation of this mod: it can't add new sizes of paintings, just add more variants to existing sizes (whether they're defined by Minecraft or a data pack).
 

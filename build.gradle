@@ -21,10 +21,10 @@ repositories {
 loom {
   splitEnvironmentSourceSets()
 
-	accessWidenerPath = file("src/main/resources/more-paintings-on-the-client.accesswidener")
+	accessWidenerPath = file("src/main/resources/client-side-painting-variants.accesswidener")
 
 	mods {
-		"more-paintings-on-the-client" {
+		"client-side-painting-variants" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
