@@ -4,9 +4,17 @@ A mod that allows you to add new types of painting without removing any existing
 
 This mod requires [Fabric API](https://modrinth.com/mod/fabric-api), so make sure it's installed with this mod.
 
-## Caveats
+## Wait, how is this different from 1.21's painting variants?
 
-As this is a client-side mod with no interaction with the server, this mod does not add new sizes of painting. It can only add new artwork for existing sizes.
+1.21's painting variants rely on data packs to specify new variants, which then means that every client connected to the server gets new paintings. What this mod does is extend that idea further, allowing resource packs to define more painting variants for any players using the mod on their clients.
+
+This does lead to the one limitation of this mod: it can't add new sizes of paintings, just add more variants to existing sizes (whether they're defined by Minecraft or a data pack).
+
+## How does this work on multiplayer?
+
+- Players without the mod will see the original paintings as sent by the server.
+- Players with the mod will see custom paintings in addition to the original paintings.
+  - If two players with the mod installed have the same resource packs installed, then they will see the same paintings.
 
 ## For resource/data pack developers
 
