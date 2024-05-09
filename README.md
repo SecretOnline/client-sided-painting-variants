@@ -8,7 +8,7 @@ This mod requires [Fabric API](https://modrinth.com/mod/fabric-api), so make sur
 
 ## Wait, how is this different from 1.21's painting variants?
 
-Minecraft `1.21` adds painting variants that rely on data packs to specify new variants, which I love because painting are fantastic. Unfortunately this means that these paintings must be defined per world, or set up by the server's admin. What this mod does is extend that idea further, allowing resource packs to define more painting variants for any players using the mod on their clients. Clients without the mod just see the regular paintings.
+Minecraft `1.21` adds painting variants that rely on data packs to specify new variants. Unfortunately this means that these paintings must be defined per world, or set up by the server's admin. What this mod does is extend that idea further, allowing resource packs to define more painting variants for any players using the mod on their clients. Clients without the mod just see the regular paintings.
 
 This does lead to the one limitation of this mod: it can't add new sizes of paintings, just add more variants to existing sizes (whether they're defined by Minecraft or a data pack).
 
@@ -17,6 +17,7 @@ This does lead to the one limitation of this mod: it can't add new sizes of pain
 - Players without the mod will see the original paintings as sent by the server.
 - Players with the mod will see custom paintings in addition to the original paintings.
   - If two players with the mod installed have the same resource packs installed, then they will see the same paintings.
+  - This mod will never override a vanilla painting with another vanilla painting, so if you see a vanilla painting then players without the mod will see that same painting.
 
 ![Comparison of viewing the same paintings from an unmodded and modded client. Custom paintings are only visible on the modded client, but show up as normal paintings on the unmodded client.](https://cdn.modrinth.com/data/T1MOUdih/images/e2cd94ce1d29a033689e3bfab5f43e235334327d.png)
 
