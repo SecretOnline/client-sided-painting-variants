@@ -27,6 +27,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
       - name: Validate Gradle
         uses: gradle/wrapper-validation-action@v2
 
@@ -46,14 +49,14 @@ jobs:
           java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
           distribution: "microsoft"
 
-      - name: Ensure Gradle wrapper is executable
-        run: chmod +x ./gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Get deploy info
         id: deploy-info
         run: |
           # Also update the mod version in gradle
-          sed -i "s/^$mod_version=.*/$mod_version=${{ inputs.version }}/" gradle.properties
+          sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
 
           game_versions=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
           release_name="${{ env.MOD_NAME }} v${{ inputs.version }} for Minecraft $game_versions"
