@@ -18,6 +18,10 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+### Fixed
+
+- Incorrect key for access widener in `fabric.mod.json`
+
 ## v1.0.0 - 2024-05-09
 
 Minecraft 1.20.6

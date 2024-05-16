@@ -22,7 +22,7 @@
 			"environment": "client"
 		}
 	],
-	"accesswidener": "client-side-painting-variants.accesswidener",
+	"accessWidener": "client-side-painting-variants.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": "~1.20.6",
