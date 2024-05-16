@@ -47,7 +47,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
-          distribution: "microsoft"
+          distribution: "zulu"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
