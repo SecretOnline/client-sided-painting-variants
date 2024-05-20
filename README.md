@@ -1,6 +1,6 @@
 # Client side painting variants
 
-Add new types of painting without removing any existing paintings, entirely on the client side.
+Use resource packs to add new types of painting without removing any existing paintings, entirely on the client side!
 
 ![Title and logo on top of a field of paintings. Some paintings are the default paintings, but others are custom.](https://cdn.modrinth.com/data/T1MOUdih/images/deebe09e46f70b2a146098f3b09e650757f3b666.png)
 
