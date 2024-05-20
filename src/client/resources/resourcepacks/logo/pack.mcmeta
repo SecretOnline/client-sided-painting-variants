@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "pack_format": 18,
+    "supported_formats": {
+      "min_inclusive": 8,
+      "max_inclusive": 999
+    },
+    "description": "§7Test pack for Client Side Painting Variants"
+  }
+}

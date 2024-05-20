@@ -18,6 +18,11 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+### Added
+
+- Test resource pack included with the mod.
+  - For now it only contains a 2x2 painting, but I may add other sizes later.
+
 ### Fixed
 
 - Incorrect key for access widener in `fabric.mod.json`
