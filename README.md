@@ -58,7 +58,7 @@ resourcepack.zip
 This as similar as possible to 1.21's painting variant system, which is driven by data packs. This mod takes the two folders from the two different types of pack and puts them together.
 
 <details>
-<summary>Equivalent data and resource pack structure</summary>
+<summary>Equivalent data and resource pack in Vanilla</summary>
 
 ```txt
 datapack.zip
@@ -83,3 +83,7 @@ resourcepack.zip
 </details>
 
 I'd love to make this a no-effort thing for pack developers (which would also have the benefit of working out-of-the-box), but unfortunately the resource/data pack split makes the ideal version of this project impossible. Instead, I think this is the next best thing. I hope that it's a small thing you can just do without having to think about it too much.
+
+## License
+
+This mod is licensed under the Mozilla Public License 2.0. You may use this mod in your mod packs. Source code is included in a separate `sources.jar` file alongside every release.
