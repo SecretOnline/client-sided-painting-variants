@@ -1,0 +1,85 @@
+name: Update Minecraft Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      minecraft-version:
+        description: New Minecraft version
+        required: true
+        type: string
+
+jobs:
+  update-minecraft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update files
+        id: update-files
+        run: |
+          minecraft_version="${{ inputs.minecraft-version }}"
+          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
+          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+
+          # yq is like jq, but can work with XML as well
+          wget -q https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O ./yq
+          chmod +x ./yq
+          fabric_api_version=$(curl -s https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | ./yq --input-format=xml --output-format=yaml '.metadata.versioning.versions.version | filter(test("\\+'"$minecraft_version"'")) | .[-1]')
+
+          yarn_mappings=$(curl -s https://meta.fabricmc.net/v2/versions/yarn | jq --raw-output 'map(select(.gameVersion == "'"$minecraft_version"'")) | first | .version')
+          loader_version=$(curl -s https://meta.fabricmc.net/v2/versions/loader | jq --raw-output 'first | .version')
+
+          cat src/main/resources/fabric.mod.json | jq '.depends.minecraft = "~'"$minecraft_version"'" | .depends.java = ">='"java_version"'" | .depends.fabricloader = ">='"$fabric_api_version"'"' > fabric.mod.json
+          rm src/main/resources/fabric.mod.json
+          mv fabric.mod.json src/main/resources/fabric.mod.json
+
+          sed -i -e '/java_version=/ s/=.*/='"$java_version"'/' gradle.properties
+          sed -i -e '/minecraft_version=/ s/=.*/='"$minecraft_version"'/' gradle.properties
+          sed -i -e '/yarn_mappings=/ s/=.*/='"$yarn_mappings"'/' gradle.properties
+          sed -i -e '/loader_version=/ s/=.*/='"$loader_version"'/' gradle.properties
+          sed -i -e '/fabric_version=/ s/=.*/='"$fabric_api_version"'/' gradle.properties
+
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
+          echo "yarn-mappings-version=$yarn_mappings" >> "$GITHUB_OUTPUT"
+          echo "loader-version=$loader_version" >> "$GITHUB_OUTPUT"
+          echo "fabric-api-version=$fabric_api_version" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare PR body
+        run: |
+          touch pr-body.md
+          cat << "EOF_AiVMO7YIg1" >> pr-body.md
+          This PR contains automated updates from the update-minecraft-version workflow.
+
+          ## Updates
+
+          |Component|Version|
+          |---|---|
+          |Minecraft|`${{ steps.update-files.outputs.minecraft-version }}`|
+          |Java|`${{ steps.update-files.outputs.java-version }}`|
+          |Yarn Mappings|`${{ steps.update-files.outputs.yarn-mappings-version }}`|
+          |Fabric API|`${{ steps.update-files.outputs.fabric-api-version }}`|
+          |Fabric Loader|`${{ steps.update-files.outputs.loader-version }}`|
+
+          ## Remember to check!
+
+          - This update does not do any remapping.
+            - It may not compile.
+            - It may still crash at run time.
+          - If this version of the mod is valid for multiple versions of Minecraft, you will need to update the version ranges manually.
+
+          EOF_AiVMO7YIg1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.CREATE_PR_PAT }}
+          commit-message: "Update to Minecraft ${{ inputs.minecraft-version }}"
+          branch: auto-update/${{ inputs.minecraft-version }}
+          delete-branch: true
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "[Auto] Update to Minecraft ${{ inputs.minecraft-version }}"
+          body-path: pr-body.md
