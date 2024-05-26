@@ -24,9 +24,11 @@
 	],
 	"accessWidener": "client-side-painting-variants.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.20.6",
 		"java": ">=21",
 		"fabric-api": "*"
+	},
+	"recommends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "1.20.5 - 1.20.6"
 	}
 }

@@ -1,0 +1,12 @@
+{
+	"name": "client-side-painting-variants",
+	"version": "1.0.0",
+	"description": "Use resource packs to add new types of painting without removing any existing paintings, entirely on the client side!",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "MPL-2.0"
+}

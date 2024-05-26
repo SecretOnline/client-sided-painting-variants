@@ -31,7 +31,7 @@ jobs:
           yarn_mappings=$(curl -s https://meta.fabricmc.net/v2/versions/yarn | jq --raw-output 'map(select(.gameVersion == "'"$minecraft_version"'")) | first | .version')
           loader_version=$(curl -s https://meta.fabricmc.net/v2/versions/loader | jq --raw-output 'first | .version')
 
-          cat src/main/resources/fabric.mod.json | jq '.depends.minecraft = "~'"$minecraft_version"'" | .depends.java = ">='"java_version"'" | .depends.fabricloader = ">='"$fabric_api_version"'"' > fabric.mod.json
+          cat src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "~'"$minecraft_version"'" | .depends.java = ">='"java_version"'" | .recommends.fabricloader = ">='"$fabric_api_version"'"' > fabric.mod.json
           rm src/main/resources/fabric.mod.json
           mv fabric.mod.json src/main/resources/fabric.mod.json
 
