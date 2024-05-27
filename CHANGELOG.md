@@ -18,10 +18,16 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.0.1 - 2024-05-27
+
+Minecraft 1.20.5 & 1.20.6
+
 ### Added
 
 - Test resource pack included with the mod.
   - For now it only contains a 2x2 painting, but I may add other sizes later.
+- Support for both 1.20.5 and 1.20.6
+  - Behind the scenes I'm working on dealing with Minecraft updates automatically. This release is a test of part of that process.
 
 ### Fixed
 
