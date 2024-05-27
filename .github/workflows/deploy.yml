@@ -33,20 +33,16 @@ jobs:
       - name: Validate Gradle
         uses: gradle/wrapper-validation-action@v2
 
-      - name: Get Minecraft version
-        id: get-minecraft-version
+      - name: Get Java version
+        id: get-java-version
         run: |
-          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
-
-          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
-          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          java_version=$(grep '^java_version=' gradle.properties | cut -d= -f2)
           echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
 
-      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
+      - name: Setup Java ${{ steps.get-java-version.outputs.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
+          java-version: ${{ steps.get-java-version.outputs.java-version }}
           distribution: "zulu"
 
       - name: Setup Gradle
@@ -58,11 +54,9 @@ jobs:
           # Also update the mod version in gradle
           sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
 
-          game_versions=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          release_name="${{ env.MOD_NAME }} v${{ inputs.version }} for Minecraft $game_versions"
+          release_name="${{ env.MOD_NAME }} v${{ inputs.version }}"
 
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
-          echo "game-versions=$game_versions" >> "$GITHUB_OUTPUT"
 
       - name: Parse changelog
         id: changelog
@@ -79,7 +73,6 @@ jobs:
         run: |
           echo "name: ${{ steps.deploy-info.outputs.release-name }}"
           echo "version: v${{ inputs.version }}"
-          echo "game-versions: ${{ steps.deploy-info.outputs.game-versions }}"
           echo "changelog: ${{ steps.changelog.outputs.release-notes }}"
 
       - name: Create Modrinth Release
@@ -89,7 +82,6 @@ jobs:
         with:
           name: ${{ steps.deploy-info.outputs.release-name }}
           version: v${{ inputs.version }}
-          game-versions: ${{ steps.deploy-info.outputs.game-versions }}
           changelog: ${{ steps.changelog.outputs.release-notes }}
           loaders: fabric
           modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
