@@ -59,6 +59,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "npm"
+
+      - name: Install
+        run: |
+          npm ci
+
       - name: Get versions
         id: get-build-test-versions
         uses: ./.github/actions/get-build-test-versions
