@@ -1,6 +1,10 @@
 name: Update Minecraft Version
 
 on:
+  schedule:
+    # 6:13 am Monday UTC
+    # = 6:13 pm Monday NZST
+    - cron: "13 6 * * 1"
   workflow_dispatch:
     inputs:
       minecraft-version:
@@ -16,38 +20,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Update files
-        id: update-files
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "npm"
+
+      - name: Install
         run: |
-          minecraft_version="${{ inputs.minecraft-version }}"
-          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
-          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          npm ci
 
-          # yq is like jq, but can work with XML as well
-          wget -q https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O ./yq
-          chmod +x ./yq
-          fabric_api_version=$(curl -s https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | ./yq --input-format=xml --output-format=yaml '.metadata.versioning.versions.version | filter(test("\\+'"$minecraft_version"'")) | .[-1]')
+      - name: Update versions
+        id: update-versions
+        uses: ./.github/actions/update-versions
+        with:
+          minecraft-version: ${{ inputs.minecraft-version }}
 
-          yarn_mappings=$(curl -s https://meta.fabricmc.net/v2/versions/yarn | jq --raw-output 'map(select(.gameVersion == "'"$minecraft_version"'")) | first | .version')
-          loader_version=$(curl -s https://meta.fabricmc.net/v2/versions/loader | jq --raw-output 'first | .version')
-
-          cat src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "~'"$minecraft_version"'" | .depends.java = ">='"java_version"'" | .recommends.fabricloader = ">='"$fabric_api_version"'"' > fabric.mod.json
+      - name: Update files
+        if: steps.update-versions.outputs.has-updates == 'true'
+        run: |
+          cat src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "${{ steps.update-versions.outputs.minecraft-version }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
           rm src/main/resources/fabric.mod.json
           mv fabric.mod.json src/main/resources/fabric.mod.json
 
-          sed -i -e '/java_version=/ s/=.*/='"$java_version"'/' gradle.properties
-          sed -i -e '/minecraft_version=/ s/=.*/='"$minecraft_version"'/' gradle.properties
-          sed -i -e '/yarn_mappings=/ s/=.*/='"$yarn_mappings"'/' gradle.properties
-          sed -i -e '/loader_version=/ s/=.*/='"$loader_version"'/' gradle.properties
-          sed -i -e '/fabric_version=/ s/=.*/='"$fabric_api_version"'/' gradle.properties
-
-          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
-          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
-          echo "yarn-mappings-version=$yarn_mappings" >> "$GITHUB_OUTPUT"
-          echo "loader-version=$loader_version" >> "$GITHUB_OUTPUT"
-          echo "fabric-api-version=$fabric_api_version" >> "$GITHUB_OUTPUT"
+          sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
+          sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
+          sed -i -e '/yarn_mappings=/ s/=.*/=${{ steps.update-versions.outputs.yarn-mappings-version }}/' gradle.properties
+          sed -i -e '/loader_version=/ s/=.*/=${{ steps.update-versions.outputs.loader-version }}/' gradle.properties
+          sed -i -e '/fabric_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
 
       - name: Prepare PR body
+        if: steps.update-versions.outputs.has-updates == 'true'
         run: |
           touch pr-body.md
           cat << "EOF_AiVMO7YIg1" >> pr-body.md
@@ -57,22 +60,22 @@ jobs:
 
           |Component|Version|
           |---|---|
-          |Minecraft|`${{ steps.update-files.outputs.minecraft-version }}`|
-          |Java|`${{ steps.update-files.outputs.java-version }}`|
-          |Yarn Mappings|`${{ steps.update-files.outputs.yarn-mappings-version }}`|
-          |Fabric API|`${{ steps.update-files.outputs.fabric-api-version }}`|
-          |Fabric Loader|`${{ steps.update-files.outputs.loader-version }}`|
+          |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}` (Compatible: `${{ steps.update-versions.outputs.minecraft-version-range }}`)|
+          |Java|`${{ steps.update-versions.outputs.java-version }}`|
+          |Yarn Mappings|`${{ steps.update-versions.outputs.yarn-mappings-version }}`|
+          |Fabric API|`${{ steps.update-versions.outputs.fabric-api-version }}`|
+          |Fabric Loader|`${{ steps.update-versions.outputs.loader-version }}`|
 
           ## Remember to check!
 
           - This update does not do any remapping.
             - It may not compile.
             - It may still crash at run time.
-          - If this version of the mod is valid for multiple versions of Minecraft, you will need to update the version ranges manually.
 
           EOF_AiVMO7YIg1
 
       - name: Create Pull Request
+        if: steps.update-versions.outputs.has-updates == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
