@@ -121,7 +121,11 @@ async function getModrinthProjectVersion(projectId) {
  * @returns {Promise<string>}
  */
 async function getYarnMappingsVersion() {
-  const response = await fetch("https://meta.fabricmc.net/v2/versions/yarn");
+  const response = await fetch("https://meta.fabricmc.net/v2/versions/yarn", {
+    headers: {
+      "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+    },
+  });
   /** @type {any[]} */
   const data = await response.json();
   const entriesForVersion = data.filter(
@@ -143,7 +147,11 @@ async function getYarnMappingsVersion() {
  * @returns {Promise<string>}
  */
 async function getFabricLoaderVersion() {
-  const response = await fetch("https://meta.fabricmc.net/v2/versions/loader");
+  const response = await fetch("https://meta.fabricmc.net/v2/versions/loader", {
+    headers: {
+      "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+    },
+  });
   /** @type {any[]} */
   const data = await response.json();
 

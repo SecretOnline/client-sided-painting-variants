@@ -22,7 +22,12 @@ export const getAllMinecraftVersions = cache(
    */
   async function getAllMinecraftVersions() {
     const response = await fetch(
-      "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
+      "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+      {
+        headers: {
+          "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+        },
+      }
     );
     const data = await response.json();
     return data;
@@ -55,7 +60,11 @@ export const getMinecraftVersion = cacheWithKey(
       throw new Error(`Could not find Minecraft version ${id}`);
     }
 
-    const response = await fetch(version.url);
+    const response = await fetch(version.url, {
+      headers: {
+        "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+      },
+    });
     const data = await response.json();
     return data;
   }
