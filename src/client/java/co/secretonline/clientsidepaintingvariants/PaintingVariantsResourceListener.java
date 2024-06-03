@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 import co.secretonline.clientsidepaintingvariants.PaintingVariantsInfo.AddedPaintingVariant;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -36,14 +37,16 @@ public class PaintingVariantsResourceListener implements IdentifiableResourceRel
 
 		// 1.21 makes paintings data-driven, so we need to figure out how many paintings
 		// Minecraft provides every time.
-		// TODO: Confirm that this still works on 1.21 (I know, kinda important).
 		// This also means that if a server provides a painting that is also provided by
 		// the client, we can de-duplicate later.
 		var paintingsFromRegistryFuture = CompletableFuture.supplyAsync(() -> {
 			Map<Identifier, PaintingVariant> paintings = new HashMap<>();
 
-			Registries.PAINTING_VARIANT.forEach((painting) -> {
-				paintings.put(Registries.PAINTING_VARIANT.getId(painting), painting);
+			var paintingRegistryWrapper = BuiltinRegistries.createWrapperLookup()
+					.getWrapperOrThrow(RegistryKeys.PAINTING_VARIANT);
+
+			paintingRegistryWrapper.streamEntries().forEach((painting) -> {
+				paintings.put(painting.getKey().orElseThrow().getValue(), painting.value());
 			});
 
 			return paintings;
@@ -75,28 +78,29 @@ public class PaintingVariantsResourceListener implements IdentifiableResourceRel
 		}, prepareExecutor);
 
 		// Combine steps from prepare stage
-		var prepareStage = paintingsFromRegistryFuture.thenCombine(paintingsFromResourcesFuture,
-				(fromRegistry, fromResources) -> {
+		var prepareStage = paintingsFromResourcesFuture;
+
+		var afterSync = prepareStage.thenCompose(synchronizer::whenPrepared);
+
+		var applyStage = afterSync
+				.thenCombine(paintingsFromRegistryFuture, (fromResources, fromRegistry) -> {
 					var info = new PaintingVariantsInfo();
 
 					fromRegistry.forEach((identifier, variant) -> info.addRegisteredPainting(identifier, variant));
 					fromResources.forEach((identifier, variant) -> info.addAddedPainting(identifier, variant));
 
 					return info;
-				});
-
-		var afterSync = prepareStage.thenCompose(synchronizer::whenPrepared);
-
-		var applyStage = afterSync.thenAcceptAsync((info) -> {
-			LOGGER.info(info.getSummaryString());
-			KNOWN_PAINTINGS = info;
-		}, applyExecutor);
+				})
+				.thenAcceptAsync((info) -> {
+					LOGGER.info(info.getSummaryString());
+					KNOWN_PAINTINGS = info;
+				}, applyExecutor);
 
 		return applyStage;
 	}
 
 	@Override
 	public Identifier getFabricId() {
-		return new Identifier(ClientSidePaintingVariants.MOD_ID, "resource-listener");
+		return ClientSidePaintingVariants.id("resource-listener");
 	}
 }
