@@ -33,7 +33,7 @@ public class PaintingEntityRendererMixin {
 		var entity = (PaintingEntity) args.get(ARG_PAINTING_ENTITY);
 		var paintingVariant = entity.getVariant().value();
 
-		var paintingsForSize = knownPaintings.getPaintingsForSize(paintingVariant.getWidth(), paintingVariant.getHeight());
+		var paintingsForSize = knownPaintings.getPaintingsForSize(paintingVariant.width(), paintingVariant.height());
 		if (paintingsForSize == null || paintingsForSize.getAddedPaintings().isEmpty()) {
 			return;
 		}

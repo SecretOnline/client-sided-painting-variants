@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class ClientSidePaintingVariantsClient implements ClientModInitializer {
 	@Override
@@ -16,7 +15,7 @@ public class ClientSidePaintingVariantsClient implements ClientModInitializer {
 
 		FabricLoader.getInstance().getModContainer(ClientSidePaintingVariants.MOD_ID).ifPresent(container -> {
 			ResourceManagerHelper.registerBuiltinResourcePack(
-					new Identifier(ClientSidePaintingVariants.MOD_ID, "logo"),
+					ClientSidePaintingVariants.id("logo"),
 					container,
 					Text.of("Client Side Painting Variants - Logo"),
 					ResourcePackActivationType.NORMAL);

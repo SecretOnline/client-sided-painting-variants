@@ -21,8 +21,6 @@ import net.minecraft.util.profiler.Profiler;
 public class PaintingVariantsResourceListener implements IdentifiableResourceReloadListener {
 	private static Logger LOGGER = ClientSidePaintingVariants.LOGGER;
 
-	private static final int NUM_PIXELS_PER_BLOCK = 16;
-
 	@Nullable
 	public static PaintingVariantsInfo KNOWN_PAINTINGS = null;
 
@@ -63,10 +61,9 @@ public class PaintingVariantsResourceListener implements IdentifiableResourceRel
 					var width = data.get("width").getAsInt();
 					var height = data.get("height").getAsInt();
 
-					var assetId = new Identifier(data.get("asset_id").getAsString());
+					var assetId = Identifier.of(data.get("asset_id").getAsString());
 
-					paintings.put(identifier,
-							new AddedPaintingVariant(width * NUM_PIXELS_PER_BLOCK, height * NUM_PIXELS_PER_BLOCK, assetId));
+					paintings.put(identifier, new AddedPaintingVariant(width, height, assetId));
 				} catch (IOException ex) {
 					LOGGER.warn("Failed to read data for " + identifier.toString() + ". Skipping");
 				} catch (Exception ex) {

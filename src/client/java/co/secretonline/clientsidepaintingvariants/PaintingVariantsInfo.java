@@ -35,7 +35,7 @@ public class PaintingVariantsInfo {
 	}
 
 	public boolean addRegisteredPainting(Identifier identifier, PaintingVariant painting) {
-		var size = getOrAddSize(painting.getWidth(), painting.getHeight());
+		var size = getOrAddSize(painting.width(), painting.height());
 
 		size.registeredPaintings.put(identifier, painting);
 		return true;
