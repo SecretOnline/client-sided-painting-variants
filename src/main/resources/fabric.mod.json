@@ -1,34 +1,36 @@
 {
-	"schemaVersion": 1,
-	"id": "client-side-painting-variants",
-	"version": "${version}",
-	"name": "Client side painting variants",
-	"description": "Add your own painting variants, but completely client-side",
-	"authors": ["secret_online"],
-	"license": "MPL-2.0",
-	"icon": "assets/client-side-painting-variants/icon.png",
-	"environment": "client",
-	"entrypoints": {
-		"main": [
-			"co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariants"
-		],
-		"client": [
-			"co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariantsClient"
-		]
-	},
-	"mixins": [
-		{
-			"config": "client-side-painting-variants.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"accessWidener": "client-side-painting-variants.accesswidener",
-	"depends": {
-		"java": ">=21",
-		"fabric-api": "*"
-	},
-	"recommends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "1.20.5 - 1.20.6"
-	}
+  "schemaVersion": 1,
+  "id": "client-side-painting-variants",
+  "version": "${version}",
+  "name": "Client side painting variants",
+  "description": "Add your own painting variants, but completely client-side",
+  "authors": [
+    "secret_online"
+  ],
+  "license": "MPL-2.0",
+  "icon": "assets/client-side-painting-variants/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariants"
+    ],
+    "client": [
+      "co.secretonline.clientsidepaintingvariants.ClientSidePaintingVariantsClient"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "client-side-painting-variants.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "client-side-painting-variants.accesswidener",
+  "depends": {
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.6"
+  }
 }
