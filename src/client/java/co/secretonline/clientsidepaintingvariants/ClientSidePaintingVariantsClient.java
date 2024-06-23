@@ -10,15 +10,19 @@ import net.minecraft.text.Text;
 public class ClientSidePaintingVariantsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		PaintingVariantsResourceListener listener = new PaintingVariantsResourceListener();
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(listener);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+				.registerReloadListener(new PaintingVariantsResourceListener());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+				.registerReloadListener(new PaintingDataListener());
 
-		FabricLoader.getInstance().getModContainer(ClientSidePaintingVariants.MOD_ID).ifPresent(container -> {
-			ResourceManagerHelper.registerBuiltinResourcePack(
-					ClientSidePaintingVariants.id("logo"),
-					container,
-					Text.of("Client Side Painting Variants - Logo"),
-					ResourcePackActivationType.NORMAL);
-		});
+		FabricLoader.getInstance()
+				.getModContainer(ClientSidePaintingVariants.MOD_ID)
+				.ifPresent(container -> {
+					ResourceManagerHelper.registerBuiltinResourcePack(
+							ClientSidePaintingVariants.id("logo"),
+							container,
+							Text.of("Client Side Painting Variants - Logo"),
+							ResourcePackActivationType.NORMAL);
+				});
 	}
 }
