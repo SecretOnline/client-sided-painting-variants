@@ -1,5 +1,6 @@
 package co.secretonline.clientsidepaintingvariants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,67 @@ public class PaintingsInfo {
 			return false;
 		}
 
-		// TODO:
+		resolvedPaintingsMap.clear();
+
+		// Add all paintings in the registry
+		registryPaintings.forEach((id, variant) -> {
+			String key = toKey(variant.width(), variant.height());
+			if (!resolvedPaintingsMap.containsKey(key)) {
+				resolvedPaintingsMap.put(key, new PaintingsForSize());
+			}
+
+			PaintingsForSize forSize = resolvedPaintingsMap.get(key);
+			forSize.registryPaintings.put(id, variant);
+		});
+
+		// Add all paintings defined in resource packs, unless they conflict with a
+		// registry entry
+		resourcePaintings.forEach((id, variant) -> {
+			String key = toKey(variant.width(), variant.height());
+			if (!resolvedPaintingsMap.containsKey(key)) {
+				resolvedPaintingsMap.put(key, new PaintingsForSize());
+			}
+
+			PaintingsForSize forSize = resolvedPaintingsMap.get(key);
+			if (forSize.registryPaintings.containsKey(id)) {
+				LOGGER.warn("Resource painting " + id.toString() + " is already defined in the registry");
+				return;
+			}
+
+			forSize.resourcePaintings.put(id, variant);
+		});
+
+		LOGGER.info(this.getSummaryString());
 
 		return true;
+	}
+
+	public String getSummaryString() {
+		int numPaintings = 0;
+		var sizeSummaries = new ArrayList<String>(resolvedPaintingsMap.size());
+
+		for (var entry : resolvedPaintingsMap.entrySet()) {
+			var key = entry.getKey();
+			var paintings = entry.getValue();
+
+			numPaintings += paintings.registryPaintings.size() + paintings.resourcePaintings.size();
+			sizeSummaries.add(new StringBuilder()
+					.append(key)
+					.append(" (")
+					.append(paintings.registryPaintings.size())
+					.append("+")
+					.append(paintings.resourcePaintings.size())
+					.append(")")
+					.toString());
+		}
+
+		var sb = new StringBuilder()
+				.append(numPaintings)
+				.append(" paintings for ")
+				.append(resolvedPaintingsMap.size())
+				.append(" sizes: ")
+				.append(String.join(", ", sizeSummaries));
+		return sb.toString();
 	}
 
 	@Nullable
