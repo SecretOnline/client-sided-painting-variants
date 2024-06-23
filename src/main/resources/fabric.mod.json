@@ -32,5 +32,10 @@
   "recommends": {
     "fabricloader": ">=0.15.11",
     "minecraft": "1.21"
+  },
+  "custom": {
+    "mc-publish": {
+      "modrinth": "T1MOUdih"
+    }
   }
 }
