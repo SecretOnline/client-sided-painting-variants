@@ -13,7 +13,7 @@ public class ClientSidePaintingVariantsClient implements ClientModInitializer {
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
 				.registerReloadListener(new PaintingVariantsResourceListener());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
-				.registerReloadListener(new PaintingDataListener());
+				.registerReloadListener(new PaintingVariantsDataListener());
 
 		FabricLoader.getInstance()
 				.getModContainer(ClientSidePaintingVariants.MOD_ID)
