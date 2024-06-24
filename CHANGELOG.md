@@ -18,6 +18,14 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.1.1 - 2024-06-24
+
+Minecraft 1.21
+
+### Fixed
+
+- Fix painting variants not updating when servers reloaded resource packs containing painting variants.
+
 ## v1.1.0 - 2024-06-14
 
 ### Updated
