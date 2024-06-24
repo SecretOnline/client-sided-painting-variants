@@ -8,6 +8,8 @@ import java.util.concurrent.Executor;
 
 import org.slf4j.Logger;
 
+import com.google.gson.JsonObject;
+
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.resource.ResourceManager;
@@ -22,39 +24,44 @@ public class PaintingVariantsResourceListener implements IdentifiableResourceRel
 	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager resourceManager,
 			Profiler propareProfiler, Profiler applyProfiler,
 			Executor prepareExecutor, Executor applyExecutor) {
-		return CompletableFuture.supplyAsync(
-				() -> this.getPaintingsFromResources(resourceManager),
-				prepareExecutor)
+		return CompletableFuture
+				.supplyAsync(
+						() -> this.getPaintingsFromResources(resourceManager),
+						prepareExecutor)
 				.thenCompose(synchronizer::whenPrepared)
 				.thenAcceptAsync(
-						(info) -> {
-							PaintingsInfo.getInstance().setResourcePaintings(info);
-						},
+						(paintings) -> PaintingsInfo.getInstance().setResourcePaintings(paintings),
 						applyExecutor);
 	}
 
+	/**
+	 * Note: This method is similar to the one in
+	 * {@link PaintingVariantsDataListener}.
+	 * If making changes here, be sure to also change there too.
+	 */
 	private Map<Identifier, PaintingVariant> getPaintingsFromResources(ResourceManager resourceManager) {
 		Map<Identifier, PaintingVariant> paintings = new HashMap<>();
 
 		// Load all files from resource packs that should contain painting variants.
 		// Vanilla paintings shouldn't appear in this list, as this is reading from
 		// resources and not data.
-		var allVariantJsonFiles = resourceManager.findResources("painting_variant",
+		var allVariantJsonFiles = resourceManager.findResources(
+				"painting_variant",
 				identifier -> identifier.getPath().endsWith(".json"));
 
 		allVariantJsonFiles.forEach((identifier, resource) -> {
 			try (var reader = resource.getReader()) {
-				var data = JsonHelper.deserialize(reader).getAsJsonObject();
-				var width = data.get("width").getAsInt();
-				var height = data.get("height").getAsInt();
+				JsonObject data = JsonHelper.deserialize(reader).getAsJsonObject();
+				int width = data.get("width").getAsInt();
+				int height = data.get("height").getAsInt();
 
-				var assetId = Identifier.of(data.get("asset_id").getAsString());
+				Identifier assetId = Identifier.of(data.get("asset_id").getAsString());
 
 				paintings.put(identifier, new PaintingVariant(width, height, assetId));
 			} catch (IOException ex) {
-				LOGGER.warn("Failed to read data for " + identifier.toString() + ". Skipping");
+				LOGGER.warn("Failed to read data for resource painting variant " + identifier.toString() + ". Skipping");
 			} catch (Exception ex) {
-				LOGGER.warn("Error while reading painting variant " + identifier.toString() + ". Skipping");
+				LOGGER.warn("Error while reading resource painting variant " + identifier.toString() + ". Skipping");
 			}
 		});
 

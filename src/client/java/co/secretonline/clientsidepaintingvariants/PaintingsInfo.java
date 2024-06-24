@@ -47,8 +47,16 @@ public class PaintingsInfo {
 	}
 
 	private boolean resolvePaintings() {
-		if (registryPaintings == null || resourcePaintings == null) {
-			LOGGER.warn("Waiting for all variants");
+		if (registryPaintings == null && resourcePaintings == null) {
+			LOGGER.warn("Waiting for world data and resources to be loaded");
+			return false;
+		}
+		if (registryPaintings != null && resourcePaintings == null) {
+			LOGGER.warn("Waiting for resources to be loaded");
+			return false;
+		}
+		if (registryPaintings == null && resourcePaintings != null) {
+			LOGGER.warn("Waiting for world data to be loaded");
 			return false;
 		}
 
