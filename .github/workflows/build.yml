@@ -19,8 +19,8 @@ jobs:
       - name: Ensure Gradle wrapper is executable
         run: chmod +x ./gradlew
 
-      - name: Validate Gradle
-        uses: gradle/wrapper-validation-action@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Get Minecraft version
         id: get-minecraft-version
@@ -37,9 +37,6 @@ jobs:
         with:
           java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
           distribution: "zulu"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
 
       - name: Build
         run: ./gradlew clean build
