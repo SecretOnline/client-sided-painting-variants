@@ -3,6 +3,7 @@ package co.secretonline.clientsidepaintingvariants;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -15,14 +16,12 @@ import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.profiler.Profiler;
 
 public class PaintingVariantsDataListener implements IdentifiableResourceReloadListener {
 	private static Logger LOGGER = ClientSidePaintingVariants.LOGGER;
 
 	@Override
 	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager resourceManager,
-			Profiler propareProfiler, Profiler applyProfiler,
 			Executor prepareExecutor, Executor applyExecutor) {
 		return CompletableFuture
 				.supplyAsync(
@@ -57,7 +56,8 @@ public class PaintingVariantsDataListener implements IdentifiableResourceReloadL
 
 				Identifier assetId = Identifier.of(data.get("asset_id").getAsString());
 
-				paintings.put(identifier, new PaintingVariant(width, height, assetId));
+				// TODO: Read text components
+				paintings.put(identifier, new PaintingVariant(width, height, assetId, Optional.empty(), Optional.empty()));
 			} catch (IOException ex) {
 				LOGGER.warn("Failed to read data for registry painting variant " + identifier.toString() + ". Skipping");
 			} catch (Exception ex) {
